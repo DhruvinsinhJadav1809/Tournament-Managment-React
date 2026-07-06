@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  body {
+    @apply bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased transition-colors duration-200;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-gray-300 dark:bg-gray-600 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-gray-400 dark:bg-gray-500; }
+}
+
+@layer components {
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 ;
+  }
+}
+
+/* react-big-calendar dark mode overrides */
+.dark .rbc-calendar {
+  background: transparent;
+  color: #e5e7eb;
+}
+.dark .rbc-toolbar button {
+  color: #9ca3af;
+}
+.dark .rbc-month-view,
+.dark .rbc-time-view,
+.dark .rbc-agenda-view {
+  border-color: #1f2937;
+}
+.dark .rbc-header,
+.dark .rbc-day-bg,
+.dark .rbc-month-row,
+.dark .rbc-time-content,
+.dark .rbc-time-header {
+  border-color: #1f2937;
+}
+.dark .rbc-today {
+  background-color: #1e2a4a;
+}
+.dark .rbc-off-range-bg {
+  background-color: #111827;
+}
+.dark .rbc-show-more {
+  background: transparent;
+  color: #6366f1;
+}
+.dark .rbc-time-slot {
+  border-color: #1f2937;
+}
+.dark .rbc-label {
+  color: #6b7280;
+}
+.dark .rbc-current-time-indicator {
+  background-color: #4a5ef7;
+}
