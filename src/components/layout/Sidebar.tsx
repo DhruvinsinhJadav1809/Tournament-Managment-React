@@ -8,6 +8,7 @@ import {
   Megaphone,
   CalendarDays,
   UserCircle,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,6 +29,7 @@ const navItems: NavItem[] = [
   { to: "/announcements", label: "Announcements", icon: Megaphone },
   { to: "/schedule", label: "Schedule", icon: CalendarDays },
   { to: "/profile", label: "My Profile", icon: UserCircle, userOnly: true },
+  { to: "/messages", label: "Messages", icon: MessageCircle },
 ];
 
 export default function Sidebar() {
@@ -42,7 +44,7 @@ export default function Sidebar() {
   return (
     <aside className="w-56 min-h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-gray-100 dark:border-gray-800">
+      <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center shrink-0">
             <Trophy size={16} className="text-white" />

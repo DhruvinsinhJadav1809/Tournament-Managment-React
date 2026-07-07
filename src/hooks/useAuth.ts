@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { authStore } from "@/store/authStore";
 import type { AuthUser } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { stopConnection } from "@/lib/signalr";
+import { stopAnnouncementConnection, stopChatConnection } from "@/lib/signalr";
 
 export function useAuth() {
   const queryClient = useQueryClient();
@@ -14,7 +14,8 @@ export function useAuth() {
   }, []);
 
   const logout = useCallback(async () => {
-    await stopConnection();
+    await stopAnnouncementConnection();
+    await stopChatConnection();
     authStore.clear();
     queryClient.clear();
     setUser(null);

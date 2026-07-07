@@ -13,6 +13,7 @@ import ProfilePage from "@/pages/profile/ProfilePage";
 import SchedulePage from "./pages/schedule/SchedulePage";
 import AnnouncementsPage from "./pages/announcements/AnnouncementsPage";
 import MobileBlocker from "./components/layout/MobileBlocker";
+import MessagesPage from "@/pages/messages/MessagesPage";
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/schedule" element={<SchedulePage />} />
                 <Route path="/announcements" element={<AnnouncementsPage />} />
+                <Route path="/messages" element={<MessagesPage />} />
                 {/* Admin only */}
                 <Route element={<AdminRoute />}>
                   <Route path="/dashboard" element={<DashboardPage />} />

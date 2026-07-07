@@ -8,4 +8,8 @@ export const usersApi = {
     api.get<Blob>("/Users/profile-image", {
       responseType: "blob",
     }),
+  getAllForChat: () =>
+    api.get<ApiResponse<PaginatedResponse<User>>>("/users", {
+      params: { page: 1, pageSize: 100 },
+    }),
 };

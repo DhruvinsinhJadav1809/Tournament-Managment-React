@@ -121,7 +121,7 @@ export default function OnlineUsers() {
           {/* Footer */}
           <div className="px-4 py-2 border-t border-gray-50 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30">
             <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
-              Updates in real-time via SignalR
+              Updates in real-time
             </p>
           </div>
         </div>
