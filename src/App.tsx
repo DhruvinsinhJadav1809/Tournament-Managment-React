@@ -14,6 +14,8 @@ import SchedulePage from "./pages/schedule/SchedulePage";
 import AnnouncementsPage from "./pages/announcements/AnnouncementsPage";
 import MobileBlocker from "./components/layout/MobileBlocker";
 import MessagesPage from "@/pages/messages/MessagesPage";
+import InvitePage from "./pages/invitation/InvitePage";
+import InviteRegisterPage from "./pages/invitation/InviteRegisterPage.tsx";
 
 export default function App() {
   return (
@@ -25,6 +27,7 @@ export default function App() {
             <Route element={<GuestRoute />}>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/invite/:token" element={<InviteRegisterPage />} />
             </Route>
 
             {/* Protected */}
@@ -46,6 +49,7 @@ export default function App() {
                   <Route path="/users" element={<UsersPage />} />
                   <Route path="/games" element={<GamesPage />} />
                   <Route path="/tournaments" element={<TournamentsPage />} />
+                  <Route path="/invite" element={<InvitePage />} />
                 </Route>
               </Route>
             </Route>

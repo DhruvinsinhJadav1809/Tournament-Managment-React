@@ -1,4 +1,4 @@
-import api from './client'
+import api from "./client";
 import type {
   ApiResponse,
   PaginatedResponse,
@@ -6,21 +6,28 @@ import type {
   TournamentFilters,
   CreateTournamentPayload,
   UpdateTournamentPayload,
-} from '@/types'
+} from "@/types";
 
 export const tournamentsApi = {
   getAll: (filters: TournamentFilters) =>
-    api.get<ApiResponse<PaginatedResponse<Tournament>>>('/tournaments', { params: filters }),
+    api.get<ApiResponse<PaginatedResponse<Tournament>>>("/tournaments", {
+      params: filters,
+    }),
 
   getById: (id: string) =>
     api.get<ApiResponse<Tournament>>(`/tournaments/${id}`),
 
   create: (payload: CreateTournamentPayload) =>
-    api.post<ApiResponse<Tournament>>('/tournaments', payload),
+    api.post<ApiResponse<Tournament>>("/tournaments", payload),
 
   update: (id: string, payload: UpdateTournamentPayload) =>
     api.put<ApiResponse<Tournament>>(`/tournaments/${id}`, payload),
 
-  delete: (id: string) =>
-    api.delete<ApiResponse<null>>(`/tournaments/${id}`),
-}
+  delete: (id: string) => api.delete<ApiResponse<null>>(`/tournaments/${id}`),
+  downloadWinnerCertificate: async (tournamentId: string) => {
+    return api.post("tournaments/download/certificate", null, {
+      params: { tournamentId },
+      responseType: "blob",
+    });
+  },
+};

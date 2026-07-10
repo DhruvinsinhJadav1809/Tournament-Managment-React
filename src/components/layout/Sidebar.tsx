@@ -9,6 +9,7 @@ import {
   CalendarDays,
   UserCircle,
   MessageCircle,
+  MailPlus,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -30,6 +31,7 @@ const navItems: NavItem[] = [
   { to: "/schedule", label: "Schedule", icon: CalendarDays },
   { to: "/profile", label: "My Profile", icon: UserCircle, userOnly: true },
   { to: "/messages", label: "Messages", icon: MessageCircle },
+  { to: "/invite", label: "Invite Players", icon: MailPlus, adminOnly: true },
 ];
 
 export default function Sidebar() {

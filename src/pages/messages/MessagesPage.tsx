@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/utils";
 import { joinConversation, leaveConversation } from "@/lib/signalr";
+import type { OnlineUsersResponse } from "@/api/onlineUsers";
 
 // ─── Time display ─────────────────────────────────────────────────────────────
 function timeLabel(dateStr: string): string {
@@ -234,10 +235,12 @@ function UserListItem({
   user,
   isSelected,
   onClick,
+  isOnline,
 }: {
   user: { id: string; fullName: string; email: string; role: string };
   isSelected: boolean;
   onClick: () => void;
+  isOnline: boolean;
 }) {
   return (
     <button
@@ -249,24 +252,46 @@ function UserListItem({
           : "hover:bg-gray-50 dark:hover:bg-gray-800",
       )}
     >
-      <div className="w-9 h-9 rounded-full bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-700 dark:text-brand-300 text-sm font-bold shrink-0">
-        {user.fullName[0]?.toUpperCase()}
+      {/* Avatar with online indicator */}
+      <div className="relative shrink-0">
+        <div className="w-9 h-9 rounded-full bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-700 dark:text-brand-300 text-sm font-bold">
+          {user.fullName[0]?.toUpperCase()}
+        </div>
+        {/* Online / offline dot */}
+        <span
+          className={cn(
+            "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-gray-900",
+            isOnline ? "bg-emerald-500" : "bg-gray-300 dark:bg-gray-600",
+          )}
+        />
       </div>
+
       <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5">
+          <p
+            className={cn(
+              "text-sm font-medium truncate",
+              isSelected
+                ? "text-brand-700 dark:text-brand-300"
+                : "text-gray-800 dark:text-gray-200",
+            )}
+          >
+            {user.fullName}
+          </p>
+        </div>
+
         <p
           className={cn(
-            "text-sm font-medium truncate",
-            isSelected
-              ? "text-brand-700 dark:text-brand-300"
-              : "text-gray-800 dark:text-gray-200",
+            "text-xs truncate",
+            isOnline
+              ? "text-emerald-500 dark:text-emerald-400"
+              : "text-gray-400 dark:text-gray-500",
           )}
         >
-          {user.fullName}
-        </p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 truncate">
-          {user.email}
+          {isOnline ? "Online" : "Offline"}
         </p>
       </div>
+
       {isSelected && (
         <ChevronRight size={14} className="text-brand-400 shrink-0" />
       )}
@@ -283,7 +308,22 @@ function AdminMessagesView({ currentUserId }: { currentUserId: string }) {
   } | null>(null);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const prevConversationId = useRef<string | null>(null);
+  const qc = useQueryClient();
+  const onlineData = qc.getQueryData<OnlineUsersResponse>(["online-users"]);
+  const onlineUserIds = new Set((onlineData?.users ?? []).map((u) => u.userId));
 
+  const [, forceUpdate] = useState(0);
+  useEffect(() => {
+    const unsubscribe = qc.getQueryCache().subscribe((event) => {
+      if (
+        event.query.queryKey[0] === "online-users" &&
+        event.type === "updated"
+      ) {
+        forceUpdate((n) => n + 1);
+      }
+    });
+    return () => unsubscribe();
+  }, [qc]);
   const { data: allUsers } = useQuery({
     queryKey: ["users-chat-list"],
     queryFn: () =>
@@ -385,6 +425,7 @@ function AdminMessagesView({ currentUserId }: { currentUserId: string }) {
                 onClick={() =>
                   handleSelectUser({ id: u.id, fullName: u.fullName })
                 }
+                isOnline={onlineUserIds.has(u.id)}
               />
             ))
           )}
@@ -411,16 +452,30 @@ function AdminMessagesView({ currentUserId }: { currentUserId: string }) {
         ) : (
           <>
             <div className="flex items-center gap-3 px-5 py-3.5 border-b border-gray-100 dark:border-gray-800 shrink-0 bg-white dark:bg-gray-900">
+              {/* Avatar */}
               <div className="w-9 h-9 rounded-full bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-700 dark:text-brand-300 text-sm font-bold shrink-0">
                 {selectedUser.fullName[0]?.toUpperCase()}
               </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+
+              {/* Name + status stacked */}
+              <div className="flex flex-col">
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 leading-snug">
                   {selectedUser.fullName}
+                </p>
+                <p
+                  className={cn(
+                    "text-xs font-medium leading-snug",
+                    onlineUserIds.has(selectedUser.id)
+                      ? "text-emerald-500"
+                      : "text-gray-400 dark:text-gray-500",
+                  )}
+                >
+                  {onlineUserIds.has(selectedUser.id)
+                    ? "● Online"
+                    : "○ Offline"}
                 </p>
               </div>
             </div>
-
             {getOrCreateMutation.isPending || !conversationId ? (
               <div className="flex-1 flex items-center justify-center">
                 <Loader2 size={24} className="animate-spin text-brand-500" />

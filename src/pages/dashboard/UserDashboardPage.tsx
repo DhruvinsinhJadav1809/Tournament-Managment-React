@@ -17,6 +17,7 @@ import {
   BarChart3,
   Target,
   CalendarClock,
+  Download,
 } from "lucide-react";
 import {
   dashboardApi,
@@ -32,6 +33,7 @@ import Modal from "@/components/common/Modal";
 import Button from "@/components/common/Button";
 import Badge from "@/components/common/Badge";
 import TournamentBracketModal from "@/pages/tournaments/TournamentBracketModal";
+import { tournamentsApi } from "@/api/tournaments";
 
 // ─── Status config ────────────────────────────────────────────────────────────
 const statusConfig: Record<
@@ -442,7 +444,42 @@ function MyTournamentCard({
   isLoadingBracket: boolean;
 }) {
   const status = getStatus(item.status);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const onDownloadCertificate = async (tournamentId: string) => {
+    try {
+      setIsLoading(true);
+      const response =
+        await tournamentsApi.downloadWinnerCertificate(tournamentId);
 
+      const blob = new Blob([response.data], {
+        type: "application/pdf",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+
+      link.download = `WinnerCertificate.pdf`;
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Certificate downloaded successfully.");
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Failed to download certificate.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div
       className={`relative rounded-2xl border overflow-hidden transition-all duration-200 ${
@@ -524,6 +561,18 @@ function MyTournamentCard({
             isLoading={isLoadingBracket}
           >
             View My Matches
+          </Button>
+        )}
+        {item.isChampion && (
+          <Button
+            variant={"outline"}
+            size="sm"
+            className="w-full mt-4 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors py-2"
+            leftIcon={<Download size={13} className="text-blue-600" />}
+            onClick={() => onDownloadCertificate(item.tournamentId)}
+            isLoading={isLoading}
+          >
+            Download Certificate
           </Button>
         )}
       </div>
